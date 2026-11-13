@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Часы">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Часы</title>
+<style>
+:root{
+  --bg:#f2f2f7; --card:#fff; --text:#000; --sub:#8e8e93; --line:#e5e5ea;
+  --accent:#007aff; --accent-soft:rgba(0,122,255,.12); --green:#34c759; --red:#ff3b30;
+  --today:#ff3b30;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#000; --card:#1c1c1e; --text:#fff; --sub:#8e8e93; --line:#2c2c2e;
+    --accent:#0a84ff; --accent-soft:rgba(10,132,255,.22); --green:#30d158; --red:#ff453a; --today:#ff453a; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font:17px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  -webkit-user-select:none;user-select:none;overscroll-behavior:none}
+body{padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 64px)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+input,textarea{font:inherit;color:var(--text);-webkit-user-select:text;user-select:text}
+.wrap{max-width:520px;margin:0 auto;padding:0 16px}
+.view{display:none}.view.on{display:block}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px}
+.top h1{font-size:28px;font-weight:700;margin:0;text-transform:capitalize}
+.top .yr{color:var(--sub);font-weight:600}
+.nav{display:flex;gap:6px}
+.nav button{width:38px;height:38px;border-radius:19px;background:var(--card);font-size:20px;color:var(--accent)}
+.todaybtn{font-size:15px!important;width:auto!important;padding:0 12px}
+
+/* calendar */
+.cal{background:var(--card);border-radius:14px;padding:8px 6px 10px}
+.wd,.grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.wd div{text-align:center;font-size:12px;color:var(--sub);font-weight:600;padding:4px 0 6px}
+.wd div:nth-child(n+6){color:var(--red);opacity:.8}
+.day{aspect-ratio:1/1.08;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding-top:6px;border-radius:10px;margin:2px;position:relative}
+.day .n{font-size:17px;width:30px;height:30px;line-height:30px;text-align:center;border-radius:15px}
+.day.we .n{color:var(--red)}
+.day.today .n{background:var(--today);color:#fff;font-weight:600}
+.day .h{font-size:12px;font-weight:600;color:var(--accent);margin-top:2px;min-height:15px}
+.day.has{background:var(--accent-soft)}
+.day.empty{visibility:hidden}
+.day .dot{position:absolute;top:5px;right:6px;width:5px;height:5px;border-radius:3px;background:var(--sub)}
+.day:active{opacity:.6}
+
+/* summary */
+.sum{margin-top:14px;background:var(--card);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:.5px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .l{color:var(--text)}
+.row .r{color:var(--sub);font-variant-numeric:tabular-nums}
+.row.big .r{color:var(--green);font-size:22px;font-weight:700}
+.row.tap .r{color:var(--accent)}
+.hint{font-size:13px;color:var(--sub);padding:8px 16px 0}
+
+/* tabbar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;
+  padding:6px 0 calc(env(safe-area-inset-bottom) + 4px);background:color-mix(in srgb,var(--card) 85%,transparent);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:.5px solid var(--line);z-index:5}
+.tabbar button{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--sub);width:90px}
+.tabbar button svg{width:26px;height:26px;margin-bottom:2px}
+.tabbar button.on{color:var(--accent)}
+
+/* sheet */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
+.mask.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:14px 14px 0 0;
+  transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);z-index:11;
+  padding:8px 16px calc(env(safe-area-inset-bottom) + 16px);max-width:520px;margin:0 auto}
+.sheet.on{transform:none}
+.grab{width:36px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+.sh-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sh-top b{font-size:17px}
+.sh-top button{color:var(--accent);font-size:17px}
+.sh-top .done{font-weight:600}
+.stepper{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border-radius:14px;padding:16px}
+.stepper button{width:54px;height:54px;border-radius:27px;background:var(--accent-soft);color:var(--accent);font-size:28px;font-weight:500}
+.stepper input{width:120px;text-align:center;font-size:44px;font-weight:700;border:0;background:none;outline:none;font-variant-numeric:tabular-nums}
+.unit{text-align:center;color:var(--sub);font-size:14px;margin-top:-6px;padding-bottom:4px}
+.chips{display:flex;gap:8px;justify-content:space-between;margin:12px 0}
+.chips button{flex:1;padding:10px 0;border-radius:10px;background:var(--card);font-weight:600}
+.chips button.on{background:var(--accent);color:#fff}
+textarea{width:100%;border:0;border-radius:12px;background:var(--card);padding:12px;resize:none;height:64px;outline:none}
+.money{text-align:center;color:var(--sub);margin:10px 0 4px;font-size:15px}
+.money b{color:var(--green)}
+.del{width:100%;margin-top:10px;padding:13px;border-radius:12px;background:var(--card);color:var(--red)}
+
+/* stats */
+.list{background:var(--card);border-radius:14px;overflow:hidden;margin-top:8px}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:.5px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.mrow .m{text-transform:capitalize}
+.mrow .s{font-size:13px;color:var(--sub)}
+.mrow .v{text-align:right;font-variant-numeric:tabular-nums}
+.mrow .v b{color:var(--green)}
+.sect{font-size:13px;color:var(--sub);text-transform:uppercase;padding:18px 16px 0}
+.yearsel{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 0 0}
+.yearsel b{font-size:20px;min-width:70px;text-align:center}
+.yearsel button{color:var(--accent);font-size:22px;width:40px;height:40px}
+
+/* settings */
+.btnrow{display:block;width:100%;text-align:left;padding:13px 16px;border-bottom:.5px solid var(--line);color:var(--accent)}
+.btnrow:last-child{border-bottom:0}
+.btnrow.red{color:var(--red)}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 84px);transform:translateX(-50%) translateY(20px);
+  background:rgba(60,60,67,.92);color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:.25s;z-index:20;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+
+<!-- ============ КАЛЕНДАРЬ ============ -->
+<section class="view on" id="v-cal">
+  <div class="wrap">
+    <div class="top">
+      <h1 id="mTitle"></h1>
+      <div class="nav">
+        <button class="todaybtn" id="bToday">Сегодня</button>
+        <button id="bPrev" aria-label="Предыдущий месяц">‹</button>
+        <button id="bNext" aria-label="Следующий месяц">›</button>
+      </div>
+    </div>
+    <div class="cal" id="cal">
+      <div class="wd"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div></div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="sum">
+      <div class="row tap" id="rateRow"><span class="l">Ставка за час</span><span class="r" id="sRate"></span></div>
+      <div class="row"><span class="l">Отработано дней</span><span class="r" id="sDays"></span></div>
+      <div class="row"><span class="l">Всего часов</span><span class="r" id="sHours"></span></div>
+      <div class="row big"><span class="l">Сумма за месяц</span><span class="r" id="sMoney"></span></div>
+    </div>
+    <div class="hint" id="rateHint"></div>
+  </div>
+</section>
+
+<!-- ============ СТАТИСТИКА ============ -->
+<section class="view" id="v-stat">
+  <div class="wrap">
+    <div class="top"><h1>Статистика</h1></div>
+    <div class="yearsel"><button id="yPrev">‹</button><b id="yTitle"></b><button id="yNext">›</button></div>
+    <div class="sum">
+      <div class="row"><span class="l">Часов за год</span><span class="r" id="yHours"></span></div>
+      <div class="row big"><span class="l">Заработано за год</span><span class="r" id="yMoney"></span></div>
+    </div>
+    <div class="sect">По месяцам</div>
+    <div class="list" id="yList"></div>
+  </div>
+</section>
+
+<!-- ============ НАСТРОЙКИ ============ -->
+<section class="view" id="v-set">
+  <div class="wrap">
+    <div class="top"><h1>Данные</h1></div>
+    <div class="sect">Резервная копия</div>
+    <div class="list">
+      <button class="btnrow" id="bExport">Сохранить копию (Яндекс.Диск, Файлы…)</button>
+      <button class="btnrow" id="bImport">Восстановить из файла</button>
+    </div>
+    <div class="hint">При сохранении откроется меню «Поделиться»: выберите «Яндекс.Диск» или «Сохранить в Файлы». Чтобы восстановить данные, выберите этот файл.</div>
+    <div class="sect">Ставки по месяцам</div>
+    <div class="list" id="rateList"></div>
+    <div class="sect">Опасная зона</div>
+    <div class="list"><button class="btnrow red" id="bWipe">Удалить все данные</button></div>
+    <div class="hint" id="info"></div>
+    <input type="file" id="fileIn" accept="application/json,.json" hidden>
+  </div>
+</section>
+
+<!-- ============ ТАББАР ============ -->
+<nav class="tabbar">
+  <button class="on" data-v="cal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Календарь</button>
+  <button data-v="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Статистика</button>
+  <button data-v="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Данные</button>
+</nav>
+
+<!-- ============ ШТОРКА: ДЕНЬ ============ -->
+<div class="mask" id="mask"></div>
+<div class="sheet" id="sDay">
+  <div class="grab"></div>
+  <div class="sh-top"><button id="dCancel">Отмена</button><b id="dTitle"></b><button class="done" id="dSave">Готово</button></div>
+  <div class="stepper">
+    <button id="dMinus">−</button>
+    <input id="dHours" inputmode="decimal" autocomplete="off">
+    <button id="dPlus">+</button>
+  </div>
+  <div class="unit">часов</div>
+  <div class="chips" id="chips"></div>
+  <textarea id="dNote" placeholder="Заметка (необязательно)"></textarea>
+  <div class="money" id="dMoney"></div>
+  <button class="del" id="dDel">Очистить день</button>
+</div>
+
+<!-- ============ ШТОРКА: СТАВКА ============ -->
+<div class="sheet" id="sRateSh">
+  <div class="grab"></div>
+  <div class="sh-top"><button id="rCancel">Отмена</button><b id="rTitle"></b><button class="done" id="rSave">Готово</button></div>
+  <div class="stepper"><input id="rVal" inputmode="decimal" autocomplete="off" style="width:220px" placeholder="0"></div>
+  <div class="unit">₽ за час</div>
+  <div class="hint" style="padding:12px 4px 0">Новая ставка действует с этого месяца и для следующих месяцев, где своя ставка не задана. Предыдущие месяцы не меняются.</div>
+  <button class="del" id="rDel">Сбросить ставку этого месяца</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+const KEY = 'hours-app-v1';
+const $ = id => document.getElementById(id);
+const MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const WD = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+
+/* ---------- хранилище ---------- */
+let db = load();
+function load(){
+  try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.days && d.rates) return d; }catch(e){}
+  return {v:1, days:{}, rates:{}};
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('Не удалось сохранить'); }
+}
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+
+/* ---------- утилиты ---------- */
+const pad = n => String(n).padStart(2,'0');
+const mKey = (y,m) => `${y}-${pad(m+1)}`;
+const dKey = (y,m,d) => `${y}-${pad(m+1)}-${pad(d)}`;
+const num = s => { const v = parseFloat(String(s).replace(',','.').replace(/\s/g,'')); return isFinite(v) ? v : NaN; };
+const fmtH = h => (Math.round(h*100)/100).toLocaleString('ru-RU',{maximumFractionDigits:2});
+const fmtM = v => (Math.round(v*100)/100).toLocaleString('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ₽';
+function hoursWord(h){
+  if (h % 1) return 'часа';
+  const n = Math.abs(h)%100, n1 = n%10;
+  if (n>10 && n<20) return 'часов';
+  if (n1===1) return 'час'; if (n1>1 && n1<5) return 'часа'; return 'часов';
+}
+/* ставка месяца: своя или последняя заданная ранее */
+function rateFor(mk){
+  if (db.rates[mk] != null) return {v:db.rates[mk], own:true};
+  const prev = Object.keys(db.rates).filter(k => k < mk).sort().pop();
+  return prev ? {v:db.rates[prev], own:false, from:prev} : {v:0, own:false};
+}
+function monthStats(y,m){
+  const pre = mKey(y,m) + '-';
+  let hours = 0, days = 0;
+  for (const k in db.days) if (k.startsWith(pre)) { const h = db.days[k].h||0; if (h>0){ hours += h; days++; } }
+  const r = rateFor(mKey(y,m)).v;
+  return {hours, days, money: hours*r, rate:r};
+}
+function mkLabel(mk){ const [y,m] = mk.split('-').map(Number); return MONTHS[m-1] + ' ' + y; }
+let tt; function toast(t){ const e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>e.classList.remove('on'),1800); }
+const haptic = () => { try{ navigator.vibrate && navigator.vibrate(8); }catch(e){} };
+
+/* ---------- календарь ---------- */
+const now = new Date();
+let Y = now.getFullYear(), M = now.getMonth();
+
+function renderCal(){
+  $('mTitle').innerHTML = `${MONTHS[M]} <span class="yr">${Y}</span>`;
+  const first = new Date(Y,M,1), total = new Date(Y,M+1,0).getDate();
+  const offset = (first.getDay()+6)%7;
+  const t = new Date(), isCur = t.getFullYear()===Y && t.getMonth()===M;
+  let html = '';
+  for (let i=0;i<offset;i++) html += '<div class="day empty"></div>';
+  for (let d=1; d<=total; d++){
+    const k = dKey(Y,M,d), e = db.days[k], wd = (offset+d-1)%7;
+    const cls = ['day']; if (wd>=5) cls.push('we'); if (isCur && t.getDate()===d) cls.push('today'); if (e && e.h>0) cls.push('has');
+    html += `<button class="${cls.join(' ')}" data-d="${d}"><span class="n">${d}</span><span class="h">${e && e.h>0 ? fmtH(e.h)+' ч' : ''}</span>${e && e.note ? '<i class="dot"></i>' : ''}</button>`;
+  }
+  $('grid').innerHTML = html;
+  const s = monthStats(Y,M), r = rateFor(mKey(Y,M));
+  $('sRate').textContent = r.v ? fmtM(r.v) : 'задать ›';
+  $('sDays').textContent = s.days;
+  $('sHours').textContent = fmtH(s.hours);
+  $('sMoney').textContent = fmtM(s.money);
+  $('rateHint').textContent = !r.v ? 'Нажмите «Ставка за час», чтобы указать ставку этого месяца.'
+    : (!r.own ? `Ставка взята из месяца «${mkLabel(r.from)}». Нажмите, чтобы задать новую.` : '');
+}
+$('grid').addEventListener('click', e => { const b = e.target.closest('.day[data-d]'); if (b) openDay(+b.dataset.d); });
+function shiftMonth(n){ M += n; if (M<0){M=11;Y--;} if (M>11){M=0;Y++;} renderCal(); }
+$('bPrev').onclick = () => shiftMonth(-1);
+$('bNext').onclick = () => shiftMonth(1);
+$('bToday').onclick = () => { Y = new Date().getFullYear(); M = new Date().getMonth(); renderCal(); };
+/* свайп по календарю */
+let sx=null, sy=0;
+$('cal').addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
+$('cal').addEventListener('touchend', e => {
+  if (sx==null) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx=null;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)*1.5) shiftMonth(dx<0 ? 1 : -1);
+}, {passive:true});
+
+/* ---------- шторки ---------- */
+let openSheet = null;
+function show(sh){ openSheet = sh; $('mask').classList.add('on'); sh.classList.add('on'); }
+function hide(){ if (!openSheet) return; document.activeElement && document.activeElement.blur(); openSheet.classList.remove('on'); $('mask').classList.remove('on'); openSheet = null; }
+$('mask').onclick = hide;
+
+/* ---------- день ---------- */
+const QUICK = [4,6,8,10,12];
+let curD = null;
+function openDay(d){
+  curD = d;
+  const k = dKey(Y,M,d), e = db.days[k] || {};
+  const dt = new Date(Y,M,d);
+  $('dTitle').textContent = `${d} ${MONTHS_GEN[M]}, ${WD[dt.getDay()]}`;
+  $('dHours').value = e.h ? fmtH(e.h) : '';
+  $('dHours').placeholder = '0';
+  $('dNote').value = e.note || '';
+  $('dDel').style.display = (e.h || e.note) ? '' : 'none';
+  renderChips(); updDayMoney();
+  show($('sDay'));
+}
+function curH(){ const v = num($('dHours').value); return isNaN(v) ? 0 : v; }
+function setH(v){ v = Math.max(0, Math.min(24, Math.round(v*4)/4)); $('dHours').value = v ? fmtH(v) : ''; renderChips(); updDayMoney(); }
+function renderChips(){
+  const h = curH();
+  $('chips').innerHTML = QUICK.map(q => `<button data-q="${q}" class="${q===h?'on':''}">${q}</button>`).join('');
+}
+function updDayMoney(){
+  const h = curH(), r = rateFor(mKey(Y,M)).v;
+  $('dMoney').innerHTML = h && r ? `${fmtH(h)} ${hoursWord(h)} × ${fmtM(r)} = <b>${fmtM(h*r)}</b>` : (h && !r ? 'Ставка на этот месяц не задана' : '&nbsp;');
+}
+$('chips').onclick = e => { const b = e.target.closest('[data-q]'); if (b){ haptic(); setH(+b.dataset.q); } };
+$('dMinus').onclick = () => { haptic(); setH(curH()-0.5); };
+$('dPlus').onclick = () => { haptic(); setH(curH()+0.5); };
+$('dHours').oninput = () => { renderChips(); updDayMoney(); };
+$('dCancel').onclick = hide;
+$('dSave').onclick = () => {
+  const raw = $('dHours').value.trim();
+  let h = raw ? num(raw) : 0;
+  if (isNaN(h) || h < 0 || h > 24){ toast('Введите от 0 до 24 часов'); return; }
+  const note = $('dNote').value.trim(), k = dKey(Y,M,curD);
+  if (h || note) db.days[k] = {h, ...(note ? {note} : {})}; else delete db.days[k];
+  save(); hide(); renderCal();
+};
+$('dDel').onclick = () => { delete db.days[dKey(Y,M,curD)]; save(); hide(); renderCal(); toast('День очищен'); };
+
+/* ---------- ставка ---------- */
+let rateMk = null;
+function openRate(mk){
+  rateMk = mk;
+  const r = rateFor(mk);
+  const lbl = mkLabel(mk); $('rTitle').textContent = lbl[0].toUpperCase() + lbl.slice(1);
+  $('rVal').value = r.v ? String(r.v).replace('.',',') : '';
+  $('rDel').style.display = r.own ? '' : 'none';
+  show($('sRateSh'));
+  setTimeout(()=>$('rVal').focus(), 300);
+}
+$('rateRow').onclick = () => openRate(mKey(Y,M));
+$('rCancel').onclick = hide;
+$('rSave').onclick = () => {
+  const v = num($('rVal').value);
+  if (isNaN(v) || v < 0){ toast('Введите ставку'); return; }
+  db.rates[rateMk] = v; save(); hide(); renderAll(); toast('Ставка сохранена');
+};
+$('rDel').onclick = () => { delete db.rates[rateMk]; save(); hide(); renderAll(); };
+
+/* ---------- статистика ---------- */
+let SY = now.getFullYear();
+function renderStat(){
+  $('yTitle').textContent = SY;
+  let H=0, S=0, html='';
+  for (let m=11; m>=0; m--){
+    const s = monthStats(SY,m); H += s.hours; S += s.money;
+    if (!s.hours) continue;
+    html += `<button class="mrow" style="width:100%" data-m="${m}"><div style="text-align:left"><div class="m">${MONTHS[m]}</div><div class="s">${s.days} дн. · ${fmtM(s.rate)}/ч</div></div><div class="v">${fmtH(s.hours)} ч<br><b>${fmtM(s.money)}</b></div></button>`;
+  }
+  $('yList').innerHTML = html || '<div class="mrow"><span class="s">Нет данных за этот год</span></div>';
+  $('yHours').textContent = fmtH(H);
+  $('yMoney').textContent = fmtM(S);
+}
+$('yList').onclick = e => { const b = e.target.closest('[data-m]'); if (b){ Y = SY; M = +b.dataset.m; tab('cal'); } };
+$('yPrev').onclick = () => { SY--; renderStat(); };
+$('yNext').onclick = () => { SY++; renderStat(); };
+
+/* ---------- данные ---------- */
+function renderSet(){
+  const ks = Object.keys(db.rates).sort().reverse();
+  $('rateList').innerHTML = ks.length ? ks.map(k => `<button class="mrow" style="width:100%" data-k="${k}"><span class="m">${mkLabel(k)}</span><span class="v">${fmtM(db.rates[k])}</span></button>`).join('')
+    : '<div class="mrow"><span class="s">Ставки ещё не заданы</span></div>';
+  $('info').textContent = `Записано дней: ${Object.keys(db.days).length}. Данные хранятся только на этом телефоне.` + (db.lastExport ? ` Последняя копия: ${new Date(db.lastExport).toLocaleString('ru-RU')}.` : '');
+}
+$('rateList').onclick = e => { const b = e.target.closest('[data-k]'); if (b) openRate(b.dataset.k); };
+
+$('bExport').onclick = async () => {
+  const d = new Date(), name = `chasy-backup-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}.json`;
+  const out = {...db}; delete out.lastExport;
+  const blob = new Blob([JSON.stringify(out,null,1)], {type:'application/json'});
+  const file = new File([blob], name, {type:'application/json'});
+  try{
+    if (navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:name});
+    } else {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+    }
+    db.lastExport = Date.now(); save(); renderSet();
+  }catch(e){ if (e.name !== 'AbortError') toast('Не удалось сохранить файл'); }
+};
+$('bImport').onclick = () => $('fileIn').click();
+$('fileIn').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try{
+    const d = JSON.parse(await f.text());
+    if (!d || typeof d.days !== 'object' || typeof d.rates !== 'object') throw 0;
+    if (!confirm(`Заменить текущие данные данными из файла?\nДней в файле: ${Object.keys(d.days).length}`)) return;
+    db = {v:1, days:d.days, rates:d.rates, lastExport:db.lastExport}; save(); renderAll(); toast('Данные восстановлены');
+  }catch(err){ toast('Файл не подходит'); }
+};
+$('bWipe').onclick = () => {
+  if (!confirm('Удалить все отметки и ставки? Отменить это будет нельзя.')) return;
+  db = {v:1, days:{}, rates:{}}; save(); renderAll(); toast('Данные удалены');
+};
+
+/* ---------- вкладки ---------- */
+function tab(v){
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.v===v));
+  document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id==='v-'+v));
+  if (v==='stat'){ renderStat(); } if (v==='set') renderSet(); if (v==='cal') renderCal();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tabbar button').forEach(b => b.onclick = () => tab(b.dataset.v));
+function renderAll(){ renderCal(); renderStat(); renderSet(); }
+
+renderAll();
+/* обновить «сегодня», если приложение долго висело в фоне */
+document.addEventListener('visibilitychange', () => { if (!document.hidden) renderCal(); });
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
