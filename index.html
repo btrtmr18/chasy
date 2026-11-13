@@ -17,60 +17,68 @@
 :root{
   --bg:#f2f2f7; --card:#fff; --text:#000; --sub:#8e8e93; --line:#e5e5ea;
   --accent:#007aff; --accent-soft:rgba(0,122,255,.12); --green:#34c759; --red:#ff3b30;
-  --today:#ff3b30;
+  --orange:#ff9500; --orange-soft:rgba(255,149,0,.16); --today:#ff3b30;
 }
 @media (prefers-color-scheme: dark){
   :root{ --bg:#000; --card:#1c1c1e; --text:#fff; --sub:#8e8e93; --line:#2c2c2e;
-    --accent:#0a84ff; --accent-soft:rgba(10,132,255,.22); --green:#30d158; --red:#ff453a; --today:#ff453a; }
+    --accent:#0a84ff; --accent-soft:rgba(10,132,255,.22); --green:#30d158; --red:#ff453a;
+    --orange:#ff9f0a; --orange-soft:rgba(255,159,10,.22); --today:#ff453a; }
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);
   font:17px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
-  -webkit-user-select:none;user-select:none;overscroll-behavior:none}
-body{padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 64px)}
-button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-input,textarea{font:inherit;color:var(--text);-webkit-user-select:text;user-select:text}
-.wrap{max-width:520px;margin:0 auto;padding:0 16px}
+  -webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 70px);overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+input,textarea{font:inherit;font-size:17px;color:var(--text);-webkit-user-select:text;user-select:text;-webkit-appearance:none;appearance:none}
+.wrap{max-width:520px;margin:0 auto;padding:0 12px}
 .view{display:none}.view.on{display:block}
 
 /* header */
-.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px}
-.top h1{font-size:28px;font-weight:700;margin:0;text-transform:capitalize}
-.top .yr{color:var(--sub);font-weight:600}
-.nav{display:flex;gap:6px}
-.nav button{width:38px;height:38px;border-radius:19px;background:var(--card);font-size:20px;color:var(--accent)}
-.todaybtn{font-size:15px!important;width:auto!important;padding:0 12px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 4px 10px}
+.top h1{font-size:26px;font-weight:700;margin:0;white-space:nowrap;min-width:0;line-height:1.1}
+.top h1 .yr{display:block;color:var(--today);font-size:14px;font-weight:600}
+.nav{display:flex;gap:6px;flex-shrink:0}
+.nav button{width:36px;height:36px;border-radius:18px;background:var(--card);font-size:20px;color:var(--accent)}
+.nav .todaybtn{font-size:15px;width:auto;padding:0 12px}
 
 /* calendar */
-.cal{background:var(--card);border-radius:14px;padding:8px 6px 10px}
-.wd,.grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.wd div{text-align:center;font-size:12px;color:var(--sub);font-weight:600;padding:4px 0 6px}
+.cal{background:var(--card);border-radius:14px;padding:6px 4px 8px}
+.wd,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.wd div{text-align:center;font-size:12px;color:var(--sub);font-weight:600;padding:4px 0 4px}
 .wd div:nth-child(n+6){color:var(--red);opacity:.8}
-.day{aspect-ratio:1/1.08;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  padding-top:6px;border-radius:10px;margin:2px;position:relative}
-.day .n{font-size:17px;width:30px;height:30px;line-height:30px;text-align:center;border-radius:15px}
+.day{width:100%;min-width:0;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding-top:5px;border-radius:9px;position:relative;overflow:hidden}
+.day .n{font-size:16px;width:28px;height:28px;line-height:28px;text-align:center;border-radius:14px}
 .day.we .n{color:var(--red)}
 .day.today .n{background:var(--today);color:#fff;font-weight:600}
-.day .h{font-size:12px;font-weight:600;color:var(--accent);margin-top:2px;min-height:15px}
+.day .h{font-size:12px;font-weight:600;color:var(--accent);margin-top:1px;min-height:15px;white-space:nowrap}
 .day.has{background:var(--accent-soft)}
+.day.kom{background:var(--orange-soft)}
+.day.kom .h{color:var(--orange)}
+.day .kb{position:absolute;top:3px;left:4px;font-size:10px;font-weight:700;color:var(--orange)}
+.day .dot{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:3px;background:var(--sub)}
 .day.empty{visibility:hidden}
-.day .dot{position:absolute;top:5px;right:6px;width:5px;height:5px;border-radius:3px;background:var(--sub)}
 .day:active{opacity:.6}
 
 /* summary */
-.sum{margin-top:14px;background:var(--card);border-radius:14px;overflow:hidden}
-.row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:.5px solid var(--line)}
+.sum{margin-top:12px;background:var(--card);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 16px;border-bottom:.5px solid var(--line);text-align:left}
 .row:last-child{border-bottom:0}
-.row .l{color:var(--text)}
-.row .r{color:var(--sub);font-variant-numeric:tabular-nums}
-.row.big .r{color:var(--green);font-size:22px;font-weight:700}
+.row .r{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row.big .r{color:var(--text);font-size:20px;font-weight:700}
 .row.tap .r{color:var(--accent)}
+.row .r.green{color:var(--green)} .row .r.red{color:var(--red)}
+.row.big .r.green{color:var(--green)} .row.big .r.red{color:var(--red)}
 .hint{font-size:13px;color:var(--sub);padding:8px 16px 0}
 
 /* tabbar */
 .tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;
-  padding:6px 0 calc(env(safe-area-inset-bottom) + 4px);background:color-mix(in srgb,var(--card) 85%,transparent);
-  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:.5px solid var(--line);z-index:5}
+  padding:6px 0 calc(env(safe-area-inset-bottom) + 4px);background:var(--card);
+  border-top:.5px solid var(--line);z-index:5}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  .tabbar{background:color-mix(in srgb,var(--card) 85%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+}
 .tabbar button{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--sub);width:90px}
 .tabbar button svg{width:26px;height:26px;margin-bottom:2px}
 .tabbar button.on{color:var(--accent)}
@@ -80,35 +88,52 @@ input,textarea{font:inherit;color:var(--text);-webkit-user-select:text;user-sele
 .mask.on{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:14px 14px 0 0;
   transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);z-index:11;
-  padding:8px 16px calc(env(safe-area-inset-bottom) + 16px);max-width:520px;margin:0 auto}
+  padding:8px 16px calc(env(safe-area-inset-bottom) + 16px);max-width:520px;margin:0 auto;max-height:88vh;overflow-y:auto}
 .sheet.on{transform:none}
 .grab{width:36px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
-.sh-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.sh-top b{font-size:17px}
-.sh-top button{color:var(--accent);font-size:17px}
-.sh-top .done{font-weight:600}
-.stepper{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border-radius:14px;padding:16px}
-.stepper button{width:54px;height:54px;border-radius:27px;background:var(--accent-soft);color:var(--accent);font-size:28px;font-weight:500}
-.stepper input{width:120px;text-align:center;font-size:44px;font-weight:700;border:0;background:none;outline:none;font-variant-numeric:tabular-nums}
-.unit{text-align:center;color:var(--sub);font-size:14px;margin-top:-6px;padding-bottom:4px}
-.chips{display:flex;gap:8px;justify-content:space-between;margin:12px 0}
-.chips button{flex:1;padding:10px 0;border-radius:10px;background:var(--card);font-weight:600}
+.sh-top{display:grid;grid-template-columns:80px 1fr 80px;align-items:center;margin-bottom:10px}
+.sh-top b{font-size:17px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-top button{color:var(--accent);font-size:17px;text-align:left}
+.sh-top .done{font-weight:600;text-align:right}
+.stepper{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border-radius:14px;padding:14px}
+.stepper button{width:52px;height:52px;border-radius:26px;background:var(--accent-soft);color:var(--accent);font-size:28px;font-weight:500;flex-shrink:0}
+.stepper input{width:120px;text-align:center;font-size:42px;font-weight:700;border:0;background:none;outline:none;font-variant-numeric:tabular-nums;padding:0}
+.unit{text-align:center;color:var(--sub);font-size:14px;padding:4px 0 0}
+.chips{display:flex;gap:8px;margin:12px 0}
+.chips button{flex:1;padding:13px 0;border-radius:12px;background:var(--card);font-weight:700;font-size:19px}
 .chips button.on{background:var(--accent);color:#fff}
-textarea{width:100%;border:0;border-radius:12px;background:var(--card);padding:12px;resize:none;height:64px;outline:none}
+.chips button.k{color:var(--orange)}
+.chips button.k.on{background:var(--orange);color:#fff}
+textarea{width:100%;border:0;border-radius:12px;background:var(--card);padding:12px;resize:none;height:60px;outline:none;display:block}
 .money{text-align:center;color:var(--sub);margin:10px 0 4px;font-size:15px}
 .money b{color:var(--green)}
 .del{width:100%;margin-top:10px;padding:13px;border-radius:12px;background:var(--card);color:var(--red)}
+.saved{text-align:center;font-size:13px;color:var(--green);height:16px;margin-top:6px;opacity:0;transition:opacity .2s}
+.saved.on{opacity:1}
+
+/* payments */
+.payadd{display:flex;gap:8px;margin-top:10px}
+.payadd input{flex:1;min-width:0;border:0;border-radius:12px;background:var(--card);padding:12px;outline:none}
+.payadd input[type=date]{flex:0 0 140px}
+.btn{padding:13px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;width:100%;margin-top:10px}
+.btn.soft{background:var(--card);color:var(--accent)}
+.prow{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:.5px solid var(--line)}
+.prow:last-child{border-bottom:0}
+.prow .x{color:var(--red);font-size:15px;padding-left:14px}
+.prow .s{font-size:13px;color:var(--sub)}
 
 /* stats */
 .list{background:var(--card);border-radius:14px;overflow:hidden;margin-top:8px}
-.mrow{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:.5px solid var(--line)}
+.mrow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 16px;border-bottom:.5px solid var(--line);text-align:left}
 .mrow:last-child{border-bottom:0}
 .mrow .m{text-transform:capitalize}
 .mrow .s{font-size:13px;color:var(--sub)}
-.mrow .v{text-align:right;font-variant-numeric:tabular-nums}
-.mrow .v b{color:var(--green)}
+.mrow .v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mrow .v b{color:var(--text)}
+.mrow .v .ok{color:var(--green);font-size:13px}
+.mrow .v .debt{color:var(--red);font-size:13px}
 .sect{font-size:13px;color:var(--sub);text-transform:uppercase;padding:18px 16px 0}
-.yearsel{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 0 0}
+.yearsel{display:flex;align-items:center;justify-content:center;gap:16px;padding:4px 0 0}
 .yearsel b{font-size:20px;min-width:70px;text-align:center}
 .yearsel button{color:var(--accent);font-size:22px;width:40px;height:40px}
 
@@ -139,10 +164,12 @@ textarea{width:100%;border:0;border-radius:12px;background:var(--card);padding:1
       <div class="grid" id="grid"></div>
     </div>
     <div class="sum">
-      <div class="row tap" id="rateRow"><span class="l">Ставка за час</span><span class="r" id="sRate"></span></div>
-      <div class="row"><span class="l">Отработано дней</span><span class="r" id="sDays"></span></div>
-      <div class="row"><span class="l">Всего часов</span><span class="r" id="sHours"></span></div>
-      <div class="row big"><span class="l">Сумма за месяц</span><span class="r" id="sMoney"></span></div>
+      <button class="row tap" id="rateRow"><span>Ставка за час</span><span class="r" id="sRate"></span></button>
+      <div class="row"><span>Отработано дней</span><span class="r" id="sDays"></span></div>
+      <div class="row"><span>Всего часов</span><span class="r" id="sHours"></span></div>
+      <div class="row big"><span>Начислено</span><span class="r" id="sMoney"></span></div>
+      <button class="row tap" id="payRow"><span>Выплачено</span><span class="r" id="sPaid"></span></button>
+      <div class="row big"><span>Остаток</span><span class="r" id="sLeft"></span></div>
     </div>
     <div class="hint" id="rateHint"></div>
   </div>
@@ -154,15 +181,21 @@ textarea{width:100%;border:0;border-radius:12px;background:var(--card);padding:1
     <div class="top"><h1>Статистика</h1></div>
     <div class="yearsel"><button id="yPrev">‹</button><b id="yTitle"></b><button id="yNext">›</button></div>
     <div class="sum">
-      <div class="row"><span class="l">Часов за год</span><span class="r" id="yHours"></span></div>
-      <div class="row big"><span class="l">Заработано за год</span><span class="r" id="yMoney"></span></div>
+      <div class="row"><span>Часов за год</span><span class="r" id="yHours"></span></div>
+      <div class="row"><span>Начислено за год</span><span class="r" id="yMoney"></span></div>
+      <div class="row"><span>Выплачено за год</span><span class="r" id="yPaid"></span></div>
+      <div class="row big"><span>Остаток за год</span><span class="r" id="yLeft"></span></div>
     </div>
     <div class="sect">По месяцам</div>
     <div class="list" id="yList"></div>
+    <div class="sum" style="margin-top:18px">
+      <div class="row big"><span>Не выплачено всего</span><span class="r" id="allLeft"></span></div>
+    </div>
+    <div class="hint">Сумма остатков за все месяцы, за все годы.</div>
   </div>
 </section>
 
-<!-- ============ НАСТРОЙКИ ============ -->
+<!-- ============ ДАННЫЕ ============ -->
 <section class="view" id="v-set">
   <div class="wrap">
     <div class="top"><h1>Данные</h1></div>
@@ -188,20 +221,26 @@ textarea{width:100%;border:0;border-radius:12px;background:var(--card);padding:1
   <button data-v="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Данные</button>
 </nav>
 
-<!-- ============ ШТОРКА: ДЕНЬ ============ -->
 <div class="mask" id="mask"></div>
+
+<!-- ============ ШТОРКА: ДЕНЬ ============ -->
 <div class="sheet" id="sDay">
   <div class="grab"></div>
-  <div class="sh-top"><button id="dCancel">Отмена</button><b id="dTitle"></b><button class="done" id="dSave">Готово</button></div>
+  <div class="sh-top"><span></span><b id="dTitle"></b><button class="done" id="dClose">Готово</button></div>
+  <div class="chips" id="chips">
+    <button data-q="8">8</button>
+    <button data-q="11">11</button>
+    <button data-q="k" class="k">К</button>
+  </div>
   <div class="stepper">
     <button id="dMinus">−</button>
-    <input id="dHours" inputmode="decimal" autocomplete="off">
+    <input id="dHours" inputmode="decimal" autocomplete="off" placeholder="0">
     <button id="dPlus">+</button>
   </div>
-  <div class="unit">часов</div>
-  <div class="chips" id="chips"></div>
-  <textarea id="dNote" placeholder="Заметка (необязательно)"></textarea>
+  <div class="unit" id="dUnit">часов</div>
+  <textarea id="dNote" placeholder="Заметка (необязательно)" style="margin-top:12px"></textarea>
   <div class="money" id="dMoney"></div>
+  <div class="saved" id="dSaved">✓ Сохранено</div>
   <button class="del" id="dDel">Очистить день</button>
 </div>
 
@@ -215,6 +254,25 @@ textarea{width:100%;border:0;border-radius:12px;background:var(--card);padding:1
   <button class="del" id="rDel">Сбросить ставку этого месяца</button>
 </div>
 
+<!-- ============ ШТОРКА: ВЫПЛАТЫ ============ -->
+<div class="sheet" id="sPay">
+  <div class="grab"></div>
+  <div class="sh-top"><span></span><b id="pTitle"></b><button class="done" id="pClose">Готово</button></div>
+  <div class="sum" style="margin-top:0">
+    <div class="row"><span>Начислено</span><span class="r" id="pEarn"></span></div>
+    <div class="row"><span>Выплачено</span><span class="r" id="pPaid"></span></div>
+    <div class="row big"><span>Остаток</span><span class="r" id="pLeft"></span></div>
+  </div>
+  <div class="sect" style="padding-left:4px">Выплаты</div>
+  <div class="list" id="pList"></div>
+  <div class="payadd">
+    <input id="pAmt" inputmode="decimal" placeholder="Сумма, ₽" autocomplete="off">
+    <input id="pDate" type="date">
+  </div>
+  <button class="btn" id="pAdd">Добавить выплату</button>
+  <button class="btn soft" id="pAll">Выплачен весь остаток</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -224,13 +282,14 @@ const KEY = 'hours-app-v1';
 const $ = id => document.getElementById(id);
 const MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
 const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-const WD = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+const WD = ['вс','пн','вт','ср','чт','пт','сб'];
 
 /* ---------- хранилище ---------- */
 let db = load();
+function norm(d){ return {v:2, days:d.days||{}, rates:d.rates||{}, pays:d.pays||{}, lastExport:d.lastExport}; }
 function load(){
-  try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.days && d.rates) return d; }catch(e){}
-  return {v:1, days:{}, rates:{}};
+  try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.days && d.rates) return norm(d); }catch(e){}
+  return norm({});
 }
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('Не удалось сохранить'); }
@@ -242,28 +301,38 @@ const pad = n => String(n).padStart(2,'0');
 const mKey = (y,m) => `${y}-${pad(m+1)}`;
 const dKey = (y,m,d) => `${y}-${pad(m+1)}-${pad(d)}`;
 const num = s => { const v = parseFloat(String(s).replace(',','.').replace(/\s/g,'')); return isFinite(v) ? v : NaN; };
-const fmtH = h => (Math.round(h*100)/100).toLocaleString('ru-RU',{maximumFractionDigits:2});
-const fmtM = v => (Math.round(v*100)/100).toLocaleString('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:2}) + ' ₽';
+const r2 = v => Math.round(v*100)/100;
+const fmtH = h => r2(h).toLocaleString('ru-RU',{maximumFractionDigits:2});
+const fmtM = v => r2(v).toLocaleString('ru-RU',{maximumFractionDigits:2}) + ' ₽';
+const todayISO = () => { const t = new Date(); return `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`; };
 function hoursWord(h){
   if (h % 1) return 'часа';
   const n = Math.abs(h)%100, n1 = n%10;
   if (n>10 && n<20) return 'часов';
   if (n1===1) return 'час'; if (n1>1 && n1<5) return 'часа'; return 'часов';
 }
-/* ставка месяца: своя или последняя заданная ранее */
 function rateFor(mk){
   if (db.rates[mk] != null) return {v:db.rates[mk], own:true};
   const prev = Object.keys(db.rates).filter(k => k < mk).sort().pop();
   return prev ? {v:db.rates[prev], own:false, from:prev} : {v:0, own:false};
 }
-function monthStats(y,m){
-  const pre = mKey(y,m) + '-';
-  let hours = 0, days = 0;
-  for (const k in db.days) if (k.startsWith(pre)) { const h = db.days[k].h||0; if (h>0){ hours += h; days++; } }
-  const r = rateFor(mKey(y,m)).v;
-  return {hours, days, money: hours*r, rate:r};
+const paidFor = mk => (db.pays[mk]||[]).reduce((s,p)=>s+(p.a||0),0);
+function monthStatsKey(mk){
+  const pre = mk + '-';
+  let hours = 0, days = 0, kom = 0;
+  for (const k in db.days) if (k.startsWith(pre)){
+    const e = db.days[k], h = e.h||0;
+    if (h>0) hours += h;
+    if (h>0 || e.k) days++;
+    if (e.k) kom++;
+  }
+  const rate = rateFor(mk).v, money = r2(hours*rate), paid = r2(paidFor(mk));
+  return {hours, days, kom, rate, money, paid, left: r2(money - paid)};
 }
+const monthStats = (y,m) => monthStatsKey(mKey(y,m));
 function mkLabel(mk){ const [y,m] = mk.split('-').map(Number); return MONTHS[m-1] + ' ' + y; }
+const cap = s => s[0].toUpperCase() + s.slice(1);
+function setLeft(el, v){ el.textContent = fmtM(v); el.classList.toggle('red', v>0.004); el.classList.toggle('green', v<=0.004); }
 let tt; function toast(t){ const e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>e.classList.remove('on'),1800); }
 const haptic = () => { try{ navigator.vibrate && navigator.vibrate(8); }catch(e){} };
 
@@ -272,23 +341,27 @@ const now = new Date();
 let Y = now.getFullYear(), M = now.getMonth();
 
 function renderCal(){
-  $('mTitle').innerHTML = `${MONTHS[M]} <span class="yr">${Y}</span>`;
+  $('mTitle').innerHTML = `<span class="yr">${Y}</span>${cap(MONTHS[M])}`;
   const first = new Date(Y,M,1), total = new Date(Y,M+1,0).getDate();
   const offset = (first.getDay()+6)%7;
   const t = new Date(), isCur = t.getFullYear()===Y && t.getMonth()===M;
   let html = '';
   for (let i=0;i<offset;i++) html += '<div class="day empty"></div>';
   for (let d=1; d<=total; d++){
-    const k = dKey(Y,M,d), e = db.days[k], wd = (offset+d-1)%7;
-    const cls = ['day']; if (wd>=5) cls.push('we'); if (isCur && t.getDate()===d) cls.push('today'); if (e && e.h>0) cls.push('has');
-    html += `<button class="${cls.join(' ')}" data-d="${d}"><span class="n">${d}</span><span class="h">${e && e.h>0 ? fmtH(e.h)+' ч' : ''}</span>${e && e.note ? '<i class="dot"></i>' : ''}</button>`;
+    const k = dKey(Y,M,d), e = db.days[k] || {}, wd = (offset+d-1)%7, h = e.h||0;
+    const cls = ['day']; if (wd>=5) cls.push('we'); if (isCur && t.getDate()===d) cls.push('today');
+    if (e.k) cls.push('kom'); else if (h>0) cls.push('has');
+    const lbl = h>0 ? fmtH(h)+' ч' : (e.k ? 'К' : '');
+    html += `<button class="${cls.join(' ')}" data-d="${d}">${e.k && h>0 ? '<i class="kb">К</i>' : ''}<span class="n">${d}</span><span class="h">${lbl}</span>${e.note ? '<i class="dot"></i>' : ''}</button>`;
   }
   $('grid').innerHTML = html;
   const s = monthStats(Y,M), r = rateFor(mKey(Y,M));
   $('sRate').textContent = r.v ? fmtM(r.v) : 'задать ›';
-  $('sDays').textContent = s.days;
+  $('sDays').textContent = s.days + (s.kom ? ` (К: ${s.kom})` : '');
   $('sHours').textContent = fmtH(s.hours);
   $('sMoney').textContent = fmtM(s.money);
+  $('sPaid').textContent = fmtM(s.paid) + ' ›';
+  setLeft($('sLeft'), s.left);
   $('rateHint').textContent = !r.v ? 'Нажмите «Ставка за час», чтобы указать ставку этого месяца.'
     : (!r.own ? `Ставка взята из месяца «${mkLabel(r.from)}». Нажмите, чтобы задать новую.` : '');
 }
@@ -297,7 +370,6 @@ function shiftMonth(n){ M += n; if (M<0){M=11;Y--;} if (M>11){M=0;Y++;} renderCa
 $('bPrev').onclick = () => shiftMonth(-1);
 $('bNext').onclick = () => shiftMonth(1);
 $('bToday').onclick = () => { Y = new Date().getFullYear(); M = new Date().getMonth(); renderCal(); };
-/* свайп по календарю */
 let sx=null, sy=0;
 $('cal').addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
 $('cal').addEventListener('touchend', e => {
@@ -311,44 +383,50 @@ function show(sh){ openSheet = sh; $('mask').classList.add('on'); sh.classList.a
 function hide(){ if (!openSheet) return; document.activeElement && document.activeElement.blur(); openSheet.classList.remove('on'); $('mask').classList.remove('on'); openSheet = null; }
 $('mask').onclick = hide;
 
-/* ---------- день ---------- */
-const QUICK = [4,6,8,10,12];
-let curD = null;
+/* ---------- день: всё сохраняется сразу ---------- */
+let curD = null, curK = false, savedT;
 function openDay(d){
   curD = d;
-  const k = dKey(Y,M,d), e = db.days[k] || {};
+  const e = db.days[dKey(Y,M,d)] || {};
+  curK = !!e.k;
   const dt = new Date(Y,M,d);
   $('dTitle').textContent = `${d} ${MONTHS_GEN[M]}, ${WD[dt.getDay()]}`;
   $('dHours').value = e.h ? fmtH(e.h) : '';
-  $('dHours').placeholder = '0';
   $('dNote').value = e.note || '';
-  $('dDel').style.display = (e.h || e.note) ? '' : 'none';
-  renderChips(); updDayMoney();
+  $('dSaved').classList.remove('on');
+  refreshDay();
   show($('sDay'));
 }
 function curH(){ const v = num($('dHours').value); return isNaN(v) ? 0 : v; }
-function setH(v){ v = Math.max(0, Math.min(24, Math.round(v*4)/4)); $('dHours').value = v ? fmtH(v) : ''; renderChips(); updDayMoney(); }
-function renderChips(){
-  const h = curH();
-  $('chips').innerHTML = QUICK.map(q => `<button data-q="${q}" class="${q===h?'on':''}">${q}</button>`).join('');
-}
-function updDayMoney(){
+function refreshDay(){
   const h = curH(), r = rateFor(mKey(Y,M)).v;
-  $('dMoney').innerHTML = h && r ? `${fmtH(h)} ${hoursWord(h)} × ${fmtM(r)} = <b>${fmtM(h*r)}</b>` : (h && !r ? 'Ставка на этот месяц не задана' : '&nbsp;');
+  document.querySelectorAll('#chips [data-q]').forEach(b => b.classList.toggle('on', b.dataset.q==='k' ? curK : +b.dataset.q===h));
+  $('dUnit').textContent = hoursWord(h);
+  $('dMoney').innerHTML = h && r ? `${fmtH(h)} ${hoursWord(h)} × ${fmtM(r)} = <b>${fmtM(h*r)}</b>` : (h && !r ? 'Ставка на этот месяц не задана' : (curK ? 'Командировка' : '&nbsp;'));
+  const e = db.days[dKey(Y,M,curD)];
+  $('dDel').style.display = e ? '' : 'none';
 }
-$('chips').onclick = e => { const b = e.target.closest('[data-q]'); if (b){ haptic(); setH(+b.dataset.q); } };
+function commitDay(){
+  let h = curH();
+  if (h < 0 || h > 24) { toast('От 0 до 24 часов'); return; }
+  const note = $('dNote').value.trim(), k = dKey(Y,M,curD);
+  if (h || note || curK){ const e = {h}; if (note) e.note = note; if (curK) e.k = true; db.days[k] = e; }
+  else delete db.days[k];
+  save(); renderCal(); refreshDay();
+  const s = $('dSaved'); s.classList.add('on'); clearTimeout(savedT); savedT = setTimeout(()=>s.classList.remove('on'), 1200);
+}
+function setH(v){ v = Math.max(0, Math.min(24, Math.round(v*4)/4)); $('dHours').value = v ? fmtH(v) : ''; commitDay(); }
+$('chips').onclick = e => {
+  const b = e.target.closest('[data-q]'); if (!b) return; haptic();
+  if (b.dataset.q === 'k'){ curK = !curK; commitDay(); return; }
+  setH(+b.dataset.q);
+  setTimeout(hide, 250);   // часы выбраны — закрываем шторку
+};
 $('dMinus').onclick = () => { haptic(); setH(curH()-0.5); };
 $('dPlus').onclick = () => { haptic(); setH(curH()+0.5); };
-$('dHours').oninput = () => { renderChips(); updDayMoney(); };
-$('dCancel').onclick = hide;
-$('dSave').onclick = () => {
-  const raw = $('dHours').value.trim();
-  let h = raw ? num(raw) : 0;
-  if (isNaN(h) || h < 0 || h > 24){ toast('Введите от 0 до 24 часов'); return; }
-  const note = $('dNote').value.trim(), k = dKey(Y,M,curD);
-  if (h || note) db.days[k] = {h, ...(note ? {note} : {})}; else delete db.days[k];
-  save(); hide(); renderCal();
-};
+$('dHours').oninput = commitDay;
+$('dNote').oninput = commitDay;
+$('dClose').onclick = hide;
 $('dDel').onclick = () => { delete db.days[dKey(Y,M,curD)]; save(); hide(); renderCal(); toast('День очищен'); };
 
 /* ---------- ставка ---------- */
@@ -356,7 +434,7 @@ let rateMk = null;
 function openRate(mk){
   rateMk = mk;
   const r = rateFor(mk);
-  const lbl = mkLabel(mk); $('rTitle').textContent = lbl[0].toUpperCase() + lbl.slice(1);
+  $('rTitle').textContent = cap(mkLabel(mk));
   $('rVal').value = r.v ? String(r.v).replace('.',',') : '';
   $('rDel').style.display = r.own ? '' : 'none';
   show($('sRateSh'));
@@ -371,19 +449,63 @@ $('rSave').onclick = () => {
 };
 $('rDel').onclick = () => { delete db.rates[rateMk]; save(); hide(); renderAll(); };
 
+/* ---------- выплаты ---------- */
+let payMk = null;
+function openPay(mk){
+  payMk = mk;
+  $('pTitle').textContent = cap(mkLabel(mk));
+  $('pAmt').value = ''; $('pDate').value = todayISO();
+  renderPay(); show($('sPay'));
+}
+function renderPay(){
+  const s = monthStatsKey(payMk), list = db.pays[payMk] || [];
+  $('pEarn').textContent = fmtM(s.money);
+  $('pPaid').textContent = fmtM(s.paid);
+  setLeft($('pLeft'), s.left);
+  $('pList').innerHTML = list.length ? list.map((p,i) =>
+    `<div class="prow"><div><div>${fmtM(p.a)}</div><div class="s">${p.d ? new Date(p.d+'T12:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}) : ''}</div></div><button class="x" data-i="${i}">Удалить</button></div>`).join('')
+    : '<div class="prow"><span class="s">Выплат пока нет</span></div>';
+  $('pAll').style.display = s.left > 0.004 ? '' : 'none';
+  $('pAll').textContent = `Выплачен весь остаток (${fmtM(s.left)})`;
+}
+function addPay(a){
+  if (!(a > 0)){ toast('Введите сумму'); return; }
+  (db.pays[payMk] = db.pays[payMk] || []).push({a: r2(a), d: $('pDate').value || todayISO()});
+  db.pays[payMk].sort((x,y) => (x.d||'').localeCompare(y.d||''));
+  save(); $('pAmt').value = ''; document.activeElement && document.activeElement.blur();
+  renderPay(); renderAll(); toast('Выплата добавлена');
+}
+$('payRow').onclick = () => openPay(mKey(Y,M));
+$('pAdd').onclick = () => addPay(num($('pAmt').value));
+$('pAll').onclick = () => addPay(monthStatsKey(payMk).left);
+$('pList').onclick = e => {
+  const b = e.target.closest('[data-i]'); if (!b) return;
+  if (!confirm('Удалить эту выплату?')) return;
+  db.pays[payMk].splice(+b.dataset.i, 1);
+  if (!db.pays[payMk].length) delete db.pays[payMk];
+  save(); renderPay(); renderAll();
+};
+$('pClose').onclick = hide;
+
 /* ---------- статистика ---------- */
 let SY = now.getFullYear();
 function renderStat(){
   $('yTitle').textContent = SY;
-  let H=0, S=0, html='';
+  let H=0, S=0, P=0, html='';
   for (let m=11; m>=0; m--){
-    const s = monthStats(SY,m); H += s.hours; S += s.money;
-    if (!s.hours) continue;
-    html += `<button class="mrow" style="width:100%" data-m="${m}"><div style="text-align:left"><div class="m">${MONTHS[m]}</div><div class="s">${s.days} дн. · ${fmtM(s.rate)}/ч</div></div><div class="v">${fmtH(s.hours)} ч<br><b>${fmtM(s.money)}</b></div></button>`;
+    const s = monthStats(SY,m); H += s.hours; S += s.money; P += s.paid;
+    if (!s.hours && !s.paid && !s.days) continue;
+    const st = s.left > 0.004 ? `<span class="debt">остаток ${fmtM(s.left)}</span>` : (s.left < -0.004 ? `<span class="ok">переплата ${fmtM(-s.left)}</span>` : (s.money ? '<span class="ok">выплачено ✓</span>' : ''));
+    html += `<button class="mrow" data-m="${m}"><div><div class="m">${MONTHS[m]}</div><div class="s">${fmtH(s.hours)} ч · ${s.days} дн. · ${fmtM(s.rate)}/ч</div></div><div class="v"><b>${fmtM(s.money)}</b><br>${st}</div></button>`;
   }
   $('yList').innerHTML = html || '<div class="mrow"><span class="s">Нет данных за этот год</span></div>';
   $('yHours').textContent = fmtH(H);
   $('yMoney').textContent = fmtM(S);
+  $('yPaid').textContent = fmtM(P);
+  setLeft($('yLeft'), r2(S-P));
+  const mks = new Set([...Object.keys(db.days).map(k=>k.slice(0,7)), ...Object.keys(db.pays)]);
+  let all = 0; mks.forEach(mk => all += monthStatsKey(mk).left);
+  setLeft($('allLeft'), r2(all));
 }
 $('yList').onclick = e => { const b = e.target.closest('[data-m]'); if (b){ Y = SY; M = +b.dataset.m; tab('cal'); } };
 $('yPrev').onclick = () => { SY--; renderStat(); };
@@ -392,7 +514,7 @@ $('yNext').onclick = () => { SY++; renderStat(); };
 /* ---------- данные ---------- */
 function renderSet(){
   const ks = Object.keys(db.rates).sort().reverse();
-  $('rateList').innerHTML = ks.length ? ks.map(k => `<button class="mrow" style="width:100%" data-k="${k}"><span class="m">${mkLabel(k)}</span><span class="v">${fmtM(db.rates[k])}</span></button>`).join('')
+  $('rateList').innerHTML = ks.length ? ks.map(k => `<button class="mrow" data-k="${k}"><span class="m">${mkLabel(k)}</span><span class="v">${fmtM(db.rates[k])}</span></button>`).join('')
     : '<div class="mrow"><span class="s">Ставки ещё не заданы</span></div>';
   $('info').textContent = `Записано дней: ${Object.keys(db.days).length}. Данные хранятся только на этом телефоне.` + (db.lastExport ? ` Последняя копия: ${new Date(db.lastExport).toLocaleString('ru-RU')}.` : '');
 }
@@ -420,26 +542,25 @@ $('fileIn').onchange = async e => {
     const d = JSON.parse(await f.text());
     if (!d || typeof d.days !== 'object' || typeof d.rates !== 'object') throw 0;
     if (!confirm(`Заменить текущие данные данными из файла?\nДней в файле: ${Object.keys(d.days).length}`)) return;
-    db = {v:1, days:d.days, rates:d.rates, lastExport:db.lastExport}; save(); renderAll(); toast('Данные восстановлены');
+    const le = db.lastExport; db = norm(d); db.lastExport = le; save(); renderAll(); toast('Данные восстановлены');
   }catch(err){ toast('Файл не подходит'); }
 };
 $('bWipe').onclick = () => {
-  if (!confirm('Удалить все отметки и ставки? Отменить это будет нельзя.')) return;
-  db = {v:1, days:{}, rates:{}}; save(); renderAll(); toast('Данные удалены');
+  if (!confirm('Удалить все отметки, ставки и выплаты? Отменить это будет нельзя.')) return;
+  db = norm({}); save(); renderAll(); toast('Данные удалены');
 };
 
 /* ---------- вкладки ---------- */
 function tab(v){
   document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.v===v));
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id==='v-'+v));
-  if (v==='stat'){ renderStat(); } if (v==='set') renderSet(); if (v==='cal') renderCal();
+  if (v==='stat') renderStat(); if (v==='set') renderSet(); if (v==='cal') renderCal();
   window.scrollTo(0,0);
 }
 document.querySelectorAll('.tabbar button').forEach(b => b.onclick = () => tab(b.dataset.v));
 function renderAll(){ renderCal(); renderStat(); renderSet(); }
 
 renderAll();
-/* обновить «сегодня», если приложение долго висело в фоне */
 document.addEventListener('visibilitychange', () => { if (!document.hidden) renderCal(); });
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(()=>{});

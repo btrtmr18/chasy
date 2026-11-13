@@ -1,5 +1,5 @@
 // Кэш для работы без интернета. При обновлении приложения увеличьте номер версии.
-const CACHE = 'chasy-v1';
+const CACHE = 'chasy-v2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
